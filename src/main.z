@@ -43,6 +43,7 @@ echo "[\tCurrent Version: " + dict:version + "\t]"
 echo "\0"
 echo "[Repositories Available]"
 echo arr:data 
+echo "[---------End----------]"
 echo "\0"
 
 let argc = arg(0)
@@ -56,11 +57,19 @@ if argc <= 2 then
 	# repos
 	echo "\tzpkg add <repo name>"
 	echo "\tzpkg del <repo name>"
+	echo "\tzpkg list" # lista paquetes 
 	return 0
 fi
 
 
 let command = arg(3)
+
+if command=="list" then
+	echo "[--Packages--]"
+	system("ls pkgs")
+	echo "[----End-----]"
+	return
+fi
 
 if arg(0) <= 3 then
 	echo "Expected 4th Argument!"
@@ -89,7 +98,7 @@ if command=="install" then
 		return
 	fi
 	chdir("pkgs")
-	d:getPkg(repo + "/" + argument)
+	d:getPkg(repo + "/" + argument + ".zip")
 	d:extractPkg()
 	remove("pkg.zip")
 	return
