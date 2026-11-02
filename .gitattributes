@@ -1,1 +1,2 @@
 *.z linguist-language=Zynk
+*.z linguist-detectable=true
