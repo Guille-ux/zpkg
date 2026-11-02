@@ -4,7 +4,7 @@ cd $(dirname $0)
 INCLUDE_LINE='export PATH="$HOME/.zpkg:$PATH"'
 
 rm -rf ~/.zpkg/*
-mkdir -p ~/.zpkg
+mkdir -p ~/.zpkg/pkgs
 cp -r * ~/.zpkg/
 
 touch "$HOME/.bashrc"
