@@ -1,0 +1,46 @@
+# esto es un parser de archivos con listas
+
+
+class LParser {
+	let text = "name;"
+	let pos = 0
+	fn load {
+		let self = $0
+		let file = $1
+		self:text = read(file)
+	}
+	fn getUChar {
+		let self = $0
+		let ch = $1
+		let current = index(self:text self:pos)
+		let ntext = current
+		do {
+			self:pos = self:pos + 1
+			if ntext != current then
+				ntext = ntext + current
+			fi
+			current = index(self:text self:pos)	
+			if current==ch then
+				break
+			fi	
+
+		} while (self:pos < len(self:text))
+		return ntext
+	}
+	fn parse {
+		let self = $0
+		let arr = Array()
+		let val
+		do {
+			if index(self:text self:pos) == "\n" then
+				self:pos = self:pos + 1
+			fi
+			val = self:getUChar(self ";")
+			self:pos = self:pos + 1
+			arr:push(arr val)
+
+		} while (self:pos < len(self:text))
+		arr:pop(arr)
+		return arr
+	}
+}

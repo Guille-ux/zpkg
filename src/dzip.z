@@ -1,0 +1,19 @@
+# se encarga de descargar paquetes y descomprimirlos
+fn getPkg {
+	echo "[Downloading Package...]"
+	let url = $0
+	let command = "curl " + url + " > pkg.zip"
+	system(command)
+}
+
+fn extractPkg {
+	echo "[Extracting Package...]"
+	let com = "unzip pkg.zip" #siempre es un pkg.zip, o no viste getPkg
+	system(com)
+}
+
+#let url = "https://guille-ux.github.io/libmorse.zip"
+#getPkg(url)
+#extractPkg()
+# eso descarga libmorse.zip y lo extrae, magia verdad?
+# me recuerda q debo actualizar munixfs para permitir archivos más grandes q solo 4 gigabytesm xq bno 4 gigas es poco

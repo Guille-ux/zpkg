@@ -1,0 +1,22 @@
+#!/usr/bin/zynk
+let i
+
+let path
+
+let text = arg(2)
+i = len(text)
+
+
+for (;0==0;) do
+	if i <= 0 or index(text i) == "/" then
+		break
+	fi
+	i = i -1
+done
+
+path = slice(arg(2) 0 i)
+
+chdir(path)
+
+let main = import("src/main.z")
+

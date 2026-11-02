@@ -1,0 +1,11 @@
+# esto ayudara a crear manifiestos. bno en este caso ayudara a 
+# crear la lista de repositorios de nuevo, xq bueno ya sabes
+
+fn newList {
+	let arr = $0
+	let text = "\0"
+	for (let i=0;i<arr:len(arr);i=i+1) do
+		text = text + index(arr:data i) + ";\n"
+	done
+	return text
+}

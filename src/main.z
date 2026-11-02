@@ -1,0 +1,121 @@
+let dumper = import("src/dump.z")
+let p=import("src/parser.z")
+let lp=import("src/lparser.z")
+let d=import("src/dzip.z")
+
+class Idk {}
+
+# funciones auxiliares
+fn check_repo {
+    # $0 es la URL del repositorio que le pasamos
+    let repo_url = $0
+    
+    # Nos bajamos el índice de paquetes a un temporal usando system()
+    let cmd = "curl -s " + repo_url + "/manifest.txt -o /tmp/zynk_remote_manifest.txt"
+    let status = system(cmd)
+
+    if status != 1 then
+        echo "Error while Connecting with Repo -> " + repo_url
+        return 0
+    fi
+
+    # Parseamos el archivo recién bajado con tu parser de texto
+    let remote_parser = p:Parser()
+    remote_parser:load(remote_parser "/tmp/zynk_remote_manifest.txt")
+    let remote_data = remote_parser:parse(remote_parser)
+    remove("/tmp/zynk_remote_manifest.txt")
+
+    return remote_data
+}
+
+let i # uso general
+
+let parser = p:Parser()
+let lparser = lp:LParser()
+parser:load(parser "manifest.txt")
+lparser:load(lparser "repos.txt")
+let dict = parser:parse(parser)
+let arr = lparser:parse(lparser)
+echo "[\tZynk Package Manager\t]"
+echo "[\tCurrent Version: " + dict:version + "\t]"
+# aqui parsearemos argumentos ahora
+
+echo "\0"
+echo "[Repositories Available]"
+echo arr:data 
+echo "\0"
+
+let argc = arg(0)
+
+if argc <= 2 then
+	echo "Help -> "
+	# aqui metere un mensaje de ayuda
+	echo "\tzpkg install <package name>"
+	# echo "\tzpkg init " vamos a quitarlo de momento, jejejejej
+	echo "\tzpkg remove <package name>"
+	# repos
+	echo "\tzpkg add <repo name>"
+	echo "\tzpkg del <repo name>"
+	return 0
+fi
+
+
+let command = arg(3)
+
+if arg(0) <= 3 then
+	echo "Expected 4th Argument!"
+	return 0
+fi
+
+let argument = arg(4)
+
+if command=="install" then
+	echo "Installing -> " + argument
+	let repo
+	let dct
+	let found = 0
+	for (i=0;i<arr:len(arr);i=i+1) do
+		repo = index(arr:data i)
+		echo "Looking on Repo -> " + repo
+		dct = check_repo(repo)
+		if exists(argument dct) then
+			echo "\t Found!"
+			found = 1
+			break # nice encontramos el repo
+		fi
+	done
+	if found==0 then
+		echo "Package Not Found!"
+		return
+	fi
+	chdir("pkgs")
+	d:getPkg(repo + "/" + argument)
+	d:extractPkg()
+	remove("pkg.zip")
+	return
+else if command=="remove" then
+	echo "Removing -> " + argument
+	system("rm -rf pkgs/" + argument)
+else if command=="add" then
+	echo "Adding Repo -> " + argument
+	arr:push(arr argument)
+	write("repos.txt" dumper:newList(arr))
+	return
+else if command=="del" then
+	let other_arr = Array() # crearemos uno nuevo pero sin lo del
+				# otro, extemadamente ineficiente
+				# lo se	
+	echo "Removing Repo -> " + argument
+	for (i=0;i<arr:len(arr);i=i+1) do
+		if index(arr:data i) != argument then
+			other_arr:push(other_arr index(arr:data i))
+		fi
+	done
+	write("repos.txt" dumper:newList(other_arr))
+	return
+fi
+fi
+fi
+fi
+
+

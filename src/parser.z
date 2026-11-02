@@ -1,0 +1,47 @@
+class Dict {}
+
+
+class Parser {
+	let text = "name=ouch;"
+	let pos = 0
+	fn load {
+		let self = $0
+		let file = $1
+		self:text = read(file)
+	}
+	fn getUChar {
+		let self = $0
+		let ch = $1
+		let current = index(self:text self:pos)
+		let ntext = current
+		do {
+			self:pos = self:pos + 1
+			if ntext != current then
+				ntext = ntext + current
+			fi
+			current = index(self:text self:pos)	
+			if current==ch then
+				break
+			fi	
+
+		} while (self:pos < len(self:text))
+		return ntext
+	}
+	fn parse {
+		let self = $0
+		let dict = Dict()
+		let name
+		let val
+		do {
+			if index(self:text self:pos) == "\n" then
+				self:pos = self:pos + 1
+			fi
+			name = self:getUChar(self "=")
+			self:pos = self:pos + 1
+			val = self:getUChar(self ";")
+			self:pos = self:pos + 1
+			let dict[name] = val
+		} while (self:pos < len(self:text))
+		return dict
+	}
+}
